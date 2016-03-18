@@ -9,8 +9,10 @@
 import UIKit
 import MapKit
 
-class PhotoMapViewController: UIViewController {
+class PhotoMapViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     @IBOutlet weak var mapView1: MKMapView!
+	
+	var image: UIImage?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,6 +20,7 @@ class PhotoMapViewController: UIViewController {
         let sfRegion = MKCoordinateRegionMake(CLLocationCoordinate2DMake(37.783333, -122.416667),
             MKCoordinateSpanMake(0.1, 0.1))
         mapView1.setRegion(sfRegion, animated: false)
+			
 
         // Do any additional setup after loading the view.
     }
@@ -27,7 +30,32 @@ class PhotoMapViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+	@IBAction func onPhotoButton(sender: AnyObject) {
+		let vc = UIImagePickerController()
+		vc.delegate = self
+		vc.allowsEditing = true
+		vc.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+		
+		self.presentViewController(vc, animated: true, completion: nil)
 
+	}
+	
+	func imagePickerController(picker: UIImagePickerController,
+		didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+			// Get the image captured by the UIImagePickerController
+			let originalImage = info[UIImagePickerControllerOriginalImage] as! UIImage
+			let editedImage = info[UIImagePickerControllerEditedImage] as! UIImage
+			
+			// Do something with the images (based on your use case)
+			
+			image = editedImage;
+			
+			// Dismiss UIImagePickerController to go back to your original view controller
+			dismissViewControllerAnimated(true, completion:
+				{
+				self.performSegueWithIdentifier("tagSegue", sender: nil)
+				})
+	}
     /*
     // MARK: - Navigation
 
