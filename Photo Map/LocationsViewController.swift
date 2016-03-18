@@ -7,6 +7,9 @@
 //
 
 import UIKit
+protocol LocationsViewControllerDelegate : class {
+    func locationsPickedLocation(controller: LocationsViewController, latitude: NSNumber, longitude: NSNumber)
+}
 
 class LocationsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
 
@@ -18,6 +21,7 @@ class LocationsViewController: UIViewController, UITableViewDelegate, UITableVie
     @IBOutlet weak var searchBar: UISearchBar!
 
     var results: NSArray = []
+    weak var delegate : LocationsViewControllerDelegate!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,11 +29,25 @@ class LocationsViewController: UIViewController, UITableViewDelegate, UITableVie
         tableView.dataSource = self
         tableView.delegate = self
         searchBar.delegate = self
+        fetchLocations("Thai")
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    func popToViewController()
+    {
+        
+    }
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let venue = results[indexPath.row] as! NSDictionary
+        
+        let lat = venue.valueForKeyPath("location.lat") as! NSNumber
+        let lng = venue.valueForKeyPath("location.lng") as! NSNumber
+
+        delegate.locationsPickedLocation(self, latitude: lat, longitude: lng)
+        
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
